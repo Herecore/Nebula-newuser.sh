@@ -1,6 +1,6 @@
 pki:
   ca: |
-    # PASTE THE CONTENTS OF CA.CRT REPLACING THIS LINE
+    CHANGE_CA
   cert: |
     CHANGE_CRT
   key: |

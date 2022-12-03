@@ -91,15 +91,18 @@ IP="192.168.1."$ID"/24"
 
 # Create the keys and certificates
 if [[  -f "ca.crt" && "ca.key"  ]]; then
+        PATH_TO_CA="./"
 	nebula-cert sign -name $NAME -ip $IP
 elif [[  -f "./ca/ca.crt" && "./ca/ca.key" ]]; then
 	cd "ca"
+    	PATH_TO_CA="./ca/"
 	nebula-cert sign -name $NAME -ip $IP
 	mv $NAME".crt" ".."
 	mv $NAME".key" ".."
 	cd ".."
 elif [[ -f "./CA/ca.crt" && "./CA/ca.key"  ]]; then
 	cd "CA"
+    	PATH_TO_CA="./CA/"
 	nebula-cert sign -name $NAME -ip $IP
 	mv $NAME".crt" ".."
 	mv $NAME".key" ".."
@@ -116,9 +119,14 @@ mkdir $NAME
 mv $NAME".crt" ./$NAME/
 mv $NAME".key" ./$NAME/
 cp user-config-template.yml ./$NAME/config-$NAME.yml
-cd $NAME
+
+# Write ca.crt file contents to user config
+awk 'NR==FNR { a[n++]=$0; next }
+/CHANGE_CA/ { for (i=0;i<n;++i) print "    " a[i]; next }
+1' $PATH_TO_CA"ca.crt" ./$NAME/config-$NAME.yml > tmp && mv tmp ./$NAME/config-$NAME.yml
 
 # Write crt and key to newly created config file
+cd $NAME
 awk 'NR==FNR { a[n++]=$0; next }
 /CHANGE_CRT/ { for (i=0;i<n;++i) print "    " a[i]; next }
 1' $NAME".crt" config-$NAME.yml > tmp && mv tmp config-$NAME.yml
