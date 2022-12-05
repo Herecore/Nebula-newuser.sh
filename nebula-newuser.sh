@@ -87,7 +87,7 @@ if ! [[  -f "user-config-template.yml"  ]]; then
 	echo "user-config-template.yml file should be provided"
 fi
 
-IP="192.168.1."$ID"/24"
+IP="192.168.100."$ID"/24"
 
 # Create the keys and certificates
 if [[  -f "ca.crt" && "ca.key"  ]]; then
